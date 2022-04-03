@@ -8,6 +8,11 @@ spring:
         wiretap: true
       httpserver:
         wiretap: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,gateway
 logging:
   level:
     reactor:

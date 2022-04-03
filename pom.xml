@@ -11,14 +11,14 @@
 	<groupId>ru.lappi</groupId>
 	<artifactId>gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>gateway</name>
 	<description>Todo app gateway service</description>
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.1</spring-cloud.version>
-		<skip-unit-test>false</skip-unit-test>
-		<skip-integration-test>false</skip-integration-test>
+		<skip-unit-test>true</skip-unit-test>
+		<skip-integration-test>true</skip-integration-test>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,6 +36,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<dependency>

@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 @SpringBootApplication
 @EnableConfigurationProperties
 @RestController
+// TODO логирование
 public class GatewayApplication {
 
 	public static void main(String[] args) {
