@@ -1,0 +1,110 @@
+package ru.lappi.gateway.configuration;
+
+import io.netty.handler.logging.LogLevel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.logging.AdvancedByteBufFormat;
+import ru.lappi.gateway.configuration.properties.ApiProperties;
+import ru.lappi.gateway.configuration.properties.AuthApi;
+import ru.lappi.gateway.configuration.properties.NotesApi;
+import ru.lappi.gateway.configuration.properties.UsersApi;
+import ru.lappi.gateway.token.ValidateTokenGatewayFilter;
+
+/**
+ * @author Nikita Gorodilov
+ */
+@Configuration
+public class GatewayApplicationConfiguration {
+    @Autowired
+    private final ApiProperties apiProperties;
+    @Autowired
+    private final ValidateTokenGatewayFilter validateTokenGatewayFilter;
+
+    public GatewayApplicationConfiguration(ApiProperties apiProperties, ValidateTokenGatewayFilter validateTokenGatewayFilter) {
+        this.apiProperties = apiProperties;
+        this.validateTokenGatewayFilter = validateTokenGatewayFilter;
+    }
+
+    @Bean
+    public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+        RouteLocatorBuilder.Builder routes = builder.routes();
+        routes = configureAlwaysAvailableRoutes(routes);
+        routes = configureHasTokenRoutes(routes);
+        return routes.build();
+    }
+
+    private RouteLocatorBuilder.Builder configureAlwaysAvailableRoutes(RouteLocatorBuilder.Builder builder) {
+        UsersApi usersApi = apiProperties.getExternal().getUsers();
+        AuthApi authApi = apiProperties.getExternal().getAuth();
+
+        String authApiUrl = authApi.getBaseUrl();
+        String usersApiUrl =usersApi.getBaseUrl();
+
+        String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
+        /* /todo-web-api/auth-api/login */
+        String loginRoutePattern = gatewayBasePath + authApi.getPath().getLogin();
+        /* /todo-web-api/users-api/users/register */
+        String registerRoutePattern = gatewayBasePath + usersApi.getPath().getRegister();
+
+        return builder
+                .route("ALWAYS_AVAILABLE_LOGIN_ROUTE", p -> p
+                        .path(loginRoutePattern)
+                        .filters(f ->
+                                f.rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(authApiUrl)
+                )
+                .route("ALWAYS_AVAILABLE_REGISTER_ROUTE", p -> p
+                        .path(registerRoutePattern)
+                        .filters(f ->
+                                f.rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(usersApiUrl)
+                );
+    }
+
+    private RouteLocatorBuilder.Builder configureHasTokenRoutes(RouteLocatorBuilder.Builder builder) {
+        NotesApi notesApi = apiProperties.getExternal().getNotes();
+        AuthApi authApi = apiProperties.getExternal().getAuth();
+
+        String authApiUrl = authApi.getBaseUrl();
+        String notesApiUrl = notesApi.getBaseUrl();
+        String accessTokenHeaderCode = apiProperties.getAccessTokenHeaderCode();
+
+        String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
+        /* /todo-web-api/notes-api/** */
+        String notesApiPattern = gatewayBasePath + notesApi .getPath().getBase() + "/**";
+        /* /todo-web-api/auth-api/** */
+        String authApiPattern = gatewayBasePath + authApi.getPath().getBase() + "/**";
+        return builder
+                .route("HAS_TOKEN_NOTES_API_ROUTE", p -> p
+                        .path(notesApiPattern)
+                        .and()
+                        .header(accessTokenHeaderCode)
+                        .filters(f -> f
+                                .filter(validateTokenGatewayFilter)
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(notesApiUrl)
+                )
+                .route("HAS_TOKEN_AUTH_API_ROUTE", p -> p
+                        .path(authApiPattern)
+                        .and()
+                        .header(accessTokenHeaderCode)
+                        .filters(f -> f
+                                .filter(validateTokenGatewayFilter)
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(authApiUrl)
+                );
+    }
+
+    @Bean
+    HttpClient httpClient() {
+        return HttpClient.create().wiretap("LoggingFilter", LogLevel.INFO, AdvancedByteBufFormat.TEXTUAL);
+    }
+}

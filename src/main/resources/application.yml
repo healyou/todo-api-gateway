@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: todo-app-gateway-service
+  cloud:
+    gateway:
+      enabled: true
+      httpclient:
+        wiretap: true
+      httpserver:
+        wiretap: true
+logging:
+  level:
+    reactor:
+      netty: INFO
+    org:
+      springframework:
+        cloud:
+          gateway: TRACE
+server:
+  port: 8080
+api:
+  access-token-header-code: X-Access-Token
+
+  # Внешнее по отношению к gateway
+  external:
+    auth:
+      base-url: http://localhost:8887
+      path:
+        base: /auth-api
+        login: ${api.external.auth.path.base}/login
+        validate-token: ${api.external.auth.path.base}/validateToken
+    users:
+      base-url: http://localhost:8082
+      path:
+        base: /users-api
+        register: ${api.external.users.path.base}/users/register
+    notes:
+      base-url: http://localhost:8222
+      path:
+        base: /notes-api
+
+  routes:
+    gateway-base-path: /todo-web-api
+    validate-token-url: ${api.external.auth.base-url}${api.external.auth.path.validate-token}

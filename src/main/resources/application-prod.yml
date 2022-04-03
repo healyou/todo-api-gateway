@@ -1,0 +1,8 @@
+api:
+  external:
+    auth:
+      base-url: http://localhost:${wiremock.server.port}
+    users:
+      base-url: http://localhost:${wiremock.server.port}
+    notes:
+      base-url: http://localhost:${wiremock.server.port}

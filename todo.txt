@@ -1,0 +1,13 @@
+1) TODO запуск проекта в docker
+2) TODO метрики на todo-api-gateway-service
+
+web -> gateway -> auth -> users
+               -> tod_o
+
+Что такое Circuit Breaker - шаблон отказоустойчивости
+Spring Cloud Circuit Breaker - Resilience4J - реализация шаблона Circuit Breaker
+Project reactor - неблокирующее апи легкое в написании
+Reactive spring cloud Resilience4J - фишки для spring + reactor
+Resilience4J spring cloud - я так понял просто в любые проекты можно встроить на спринге
+почему spring cloud gateway не работает с spring-web
+Spring Cloud DiscoveryClient integration - клиент для сервиса обнаружения (чтобы видеть, что есть в системе)
