@@ -1,1 +1,8 @@
-# nothing
+api:
+  external:
+    auth:
+      base-url: http://auth-app:8887
+    users:
+      base-url: http://users-app:8082
+    notes:
+      base-url: http://todo-app:8222

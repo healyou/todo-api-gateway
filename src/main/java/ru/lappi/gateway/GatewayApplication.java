@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 @EnableConfigurationProperties
 @RestController
 // TODO логирование
+// TODO добавить spring cloud netflix eureka
 public class GatewayApplication {
 
 	public static void main(String[] args) {
