@@ -15,12 +15,21 @@ management:
         include: health,gateway
 logging:
   level:
+    root: info
+    ru:
+      lappi:
+        gateway: debug
     reactor:
       netty: INFO
     org:
       springframework:
         cloud:
           gateway: TRACE
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+  file:
+    name: "${user.dir}/log/gateway-service.log"
 server:
   port: 8080
 api:

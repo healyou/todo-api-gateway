@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 @SpringBootApplication
 @EnableConfigurationProperties
 @RestController
-// TODO логирование
 // TODO добавить spring cloud netflix eureka
 public class GatewayApplication {
 

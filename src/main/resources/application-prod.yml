@@ -6,3 +6,7 @@ api:
       base-url: http://users-app:8082
     notes:
       base-url: http://todo-app:8222
+
+logging:
+  file:
+    name: "/var/log/gateway-service/gateway-service.log"
