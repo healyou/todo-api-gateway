@@ -18,13 +18,13 @@ import ru.lappi.gateway.token.ValidateTokenGatewayFilter;
  * @author Nikita Gorodilov
  */
 @Configuration
-public class GatewayApplicationConfiguration {
+public class GatewayRouteConfiguration {
     @Autowired
     private final ApiProperties apiProperties;
     @Autowired
     private final ValidateTokenGatewayFilter validateTokenGatewayFilter;
 
-    public GatewayApplicationConfiguration(ApiProperties apiProperties, ValidateTokenGatewayFilter validateTokenGatewayFilter) {
+    public GatewayRouteConfiguration(ApiProperties apiProperties, ValidateTokenGatewayFilter validateTokenGatewayFilter) {
         this.apiProperties = apiProperties;
         this.validateTokenGatewayFilter = validateTokenGatewayFilter;
     }
@@ -53,15 +53,21 @@ public class GatewayApplicationConfiguration {
         return builder
                 .route("ALWAYS_AVAILABLE_LOGIN_ROUTE", p -> p
                         .path(loginRoutePattern)
-                        .filters(f ->
-                                f.rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.AUTH_API_CIRCUIT_BREAKER_NAME)
+                                )
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
                         )
                         .uri(authApiUrl)
                 )
                 .route("ALWAYS_AVAILABLE_REGISTER_ROUTE", p -> p
                         .path(registerRoutePattern)
-                        .filters(f ->
-                                f.rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.USERS_API_CIRCUIT_BREAKER_NAME)
+                                )
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
                         )
                         .uri(usersApiUrl)
                 );
@@ -86,6 +92,9 @@ public class GatewayApplicationConfiguration {
                         .and()
                         .header(accessTokenHeaderCode)
                         .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.NOTES_API_CIRCUIT_BREAKER_NAME)
+                                )
                                 .filter(validateTokenGatewayFilter)
                                 .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
                         )
@@ -96,6 +105,9 @@ public class GatewayApplicationConfiguration {
                         .and()
                         .header(accessTokenHeaderCode)
                         .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.AUTH_API_CIRCUIT_BREAKER_NAME)
+                                )
                                 .filter(validateTokenGatewayFilter)
                                 .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
                         )

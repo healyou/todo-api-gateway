@@ -15,10 +15,15 @@ management:
         include: health,gateway
 logging:
   level:
-    root: info
+    root: INFO
+    io:
+      github:
+        resilience4j:
+          circuitbreaker:
+            internal: DEBUG
     ru:
       lappi:
-        gateway: debug
+        gateway: DEBUG
     reactor:
       netty: INFO
     org:
