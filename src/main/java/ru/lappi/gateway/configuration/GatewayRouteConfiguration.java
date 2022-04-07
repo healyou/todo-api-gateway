@@ -45,9 +45,9 @@ public class GatewayRouteConfiguration {
         String usersApiUrl =usersApi.getBaseUrl();
 
         String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
-        /* /todo-web-api/auth-api/login */
+        /* /tod_o-web-api/auth-api/login */
         String loginRoutePattern = gatewayBasePath + authApi.getPath().getLogin();
-        /* /todo-web-api/users-api/users/register */
+        /* /tod_o-web-api/users-api/users/register */
         String registerRoutePattern = gatewayBasePath + usersApi.getPath().getRegister();
 
         return builder
@@ -82,9 +82,9 @@ public class GatewayRouteConfiguration {
         String accessTokenHeaderCode = apiProperties.getAccessTokenHeaderCode();
 
         String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
-        /* /todo-web-api/notes-api/** */
+        /* /tod_o-web-api/notes-api/** */
         String notesApiPattern = gatewayBasePath + notesApi .getPath().getBase() + "/**";
-        /* /todo-web-api/auth-api/** */
+        /* /tod_o-web-api/auth-api/** */
         String authApiPattern = gatewayBasePath + authApi.getPath().getBase() + "/**";
         return builder
                 .route("HAS_TOKEN_NOTES_API_ROUTE", p -> p
