@@ -1,10 +1,14 @@
 package ru.lappi.gateway.configuration.properties;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Nikita Gorodilov
  */
 public class NotesApi {
+    @NotNull
     private String baseUrl;
+    @NotNull
     private NotesPath path;
 
     public String getBaseUrl() {
@@ -24,6 +28,7 @@ public class NotesApi {
     }
 
     public static class NotesPath {
+        @NotNull
         private String base;
 
         public String getBase() {

@@ -1,11 +1,16 @@
 package ru.lappi.gateway.configuration.properties;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Nikita Gorodilov
  */
 public class External {
+    @NotNull
     private AuthApi auth;
+    @NotNull
     private UsersApi users;
+    @NotNull
     private NotesApi notes;
 
     public AuthApi getAuth() {

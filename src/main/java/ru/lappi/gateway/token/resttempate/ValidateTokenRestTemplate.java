@@ -37,7 +37,7 @@ public class ValidateTokenRestTemplate extends RestTemplate {
 
         HttpEntity<String> request =
                 new HttpEntity<>(null, headers);
-        // TODO тесты для circuit breaker
+
         return postForEntity(
                 validateTokenUrl,
                 request,

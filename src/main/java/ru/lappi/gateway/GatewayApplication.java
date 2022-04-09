@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @SpringBootApplication
 @EnableConfigurationProperties
-// TODO добавить spring cloud netflix eureka
 public class GatewayApplication {
 
 	public static void main(String[] args) {

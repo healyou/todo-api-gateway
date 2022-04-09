@@ -1,10 +1,14 @@
 package ru.lappi.gateway.configuration.properties;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Nikita Gorodilov
  */
 public class AuthApi {
+    @NotNull
     private String baseUrl;
+    @NotNull
     private AuthPath path;
 
     public String getLoginUrl() {
@@ -28,8 +32,11 @@ public class AuthApi {
     }
 
     public static class AuthPath {
+        @NotNull
         private String base;
+        @NotNull
         private String login;
+        @NotNull
         private String validateToken;
 
         public String getBase() {

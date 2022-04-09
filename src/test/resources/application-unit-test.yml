@@ -1,7 +1,10 @@
 spring:
   main:
     allow-bean-definition-overriding: true
-
+circuitbreaker:
+  slidingWindowSize: 2
+  minimumNumberOfCalls: 2
+  slowCallDurationThresholdMillis: 500
 api:
   external:
     auth:

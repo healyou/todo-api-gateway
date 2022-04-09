@@ -1,10 +1,14 @@
 package ru.lappi.gateway.configuration.properties;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Nikita Gorodilov
  */
 public class Routes {
+    @NotNull
     private String gatewayBasePath;
+    @NotNull
     private String validateTokenUrl;
 
     public String getGatewayBasePath() {

@@ -2,11 +2,13 @@ package ru.lappi.gateway.configuration;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.timelimiter.TimeLimiterConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.lappi.gateway.configuration.properties.CircuitBreakerProperties;
 
 import java.time.Duration;
 
@@ -19,19 +21,31 @@ public class CircuitBreakerConfiguration {
     public static final String USERS_API_CIRCUIT_BREAKER_NAME = "usersApiCircuitBreaker";
     public static final String NOTES_API_CIRCUIT_BREAKER_NAME = "usersApiCircuitBreaker";
 
+    public static final String CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_CODE = "circuitbreaker.slidingWindowSize";
+    public static final String CIRCUIT_BREAKER_MINIMUM_NUMBERS_OF_CALLS_CODE = "circuitbreaker.minimumNumberOfCalls";
+
+    @Autowired
+    private final CircuitBreakerProperties circuitBreakerProperties;
+
+    public CircuitBreakerConfiguration(CircuitBreakerProperties circuitBreakerProperties) {
+        this.circuitBreakerProperties = circuitBreakerProperties;
+    }
+
     @Bean
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
         CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
                 /* Переход по состояниям по кол-ву запросов */
                 .slidingWindowType(CircuitBreakerConfig.SlidingWindowType.COUNT_BASED)
                 /* Минимальное кол-во вызовов для перехода в состояние open */
-                .slidingWindowSize(10)
+                .slidingWindowSize(circuitBreakerProperties.getSlidingWindowSize())
                 /* Для вычисления рейтинга ошибок */
-                .minimumNumberOfCalls(10)
+                .minimumNumberOfCalls(circuitBreakerProperties.getMinimumNumberOfCalls())
                 /* Процент ошибочных запросов, чтобы перейти в открытое состояние */
                 .failureRateThreshold(CircuitBreakerConfig.DEFAULT_FAILURE_RATE_THRESHOLD)
                 /* Длительность медленного запроса - будет ошибкой */
-                .slowCallDurationThreshold(Duration.ofSeconds(15))
+                .slowCallDurationThreshold(
+                        Duration.ofMillis(circuitBreakerProperties.getSlowCallDurationThresholdMillis())
+                )
                 /* Количество медленных запросов для перехода в открытое состоение */
                 .slowCallRateThreshold(CircuitBreakerConfig.DEFAULT_SLOW_CALL_RATE_THRESHOLD)
                 /* Время, которое находимся в состоянии open */

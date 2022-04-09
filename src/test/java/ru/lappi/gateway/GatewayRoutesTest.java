@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.lappi.gateway.configuration.properties.ApiProperties;
+import ru.lappi.gateway.utils.StubRequestUtils;
 import ru.lappi.gateway.utils.TestUrlUtils;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import ru.lappi.gateway.utils.WebClientUtils;
 
 public class GatewayRoutesTest extends BaseUnitTest {
 	@Autowired
@@ -17,35 +16,25 @@ public class GatewayRoutesTest extends BaseUnitTest {
 	private ApiProperties apiProperties;
 	@Autowired
 	private TestUrlUtils testUrlUtils;
+	@Autowired
+	private StubRequestUtils stubRequestUtils;
+	@Autowired
+	private WebClientUtils webClientUtils;
 
 	@Test
 	void testAlwaysAvailableUrlRequests() {
 		String requestResponseBody = "response_body";
 		for (String requestPath: testUrlUtils.getAlwaysAvailableRequestPaths()) {
-			stubForJsonRequest(requestPath, requestResponseBody);
+			stubRequestUtils.stubForJsonRequest(requestPath, requestResponseBody);
 		}
 
 		for (String requestPath: testUrlUtils.getAlwaysAvailableRequestPaths()) {
 			/* without token header */
-			webClient
-					.post().uri(apiProperties.getRoutes().getGatewayBasePath() + requestPath)
-					.exchange()
-					.expectStatus().isOk()
-					.expectBody()
-					.consumeWith(response ->
-							assertThat(response.getResponseBody()).isEqualTo(requestResponseBody.getBytes())
-					);
+			String routeRequestPath = apiProperties.getGatewayBasePath() + requestPath;
+			webClientUtils.postForExpectResult(routeRequestPath, HttpStatus.OK, requestResponseBody);
 
 			/* with token header */
-			webClient
-					.post().uri(apiProperties.getRoutes().getGatewayBasePath() + requestPath)
-					.header(apiProperties.getAccessTokenHeaderCode(), "testAccessToken")
-					.exchange()
-					.expectStatus().isOk()
-					.expectBody()
-					.consumeWith(response ->
-							assertThat(response.getResponseBody()).isEqualTo(requestResponseBody.getBytes())
-					);
+			webClientUtils.postWithTokenForExpectResult(routeRequestPath, HttpStatus.OK, requestResponseBody);
 		}
 	}
 
@@ -53,61 +42,29 @@ public class GatewayRoutesTest extends BaseUnitTest {
 	void testHasTokenUrlRequestsWithToken() {
 		String requestResponseBody = "response_body";
 		for (String requestPath: testUrlUtils.getHasTokenHeaderRequestPaths()) {
-			stubForJsonRequest(requestPath, requestResponseBody);
+			stubRequestUtils.stubForJsonRequest(requestPath, requestResponseBody);
 		}
-		stubForValidateTokenRequest();
+		stubRequestUtils.stubForValidateTokenRequest();
 
 		for (String requestPath: testUrlUtils.getHasTokenHeaderRequestPaths()) {
-			webClient
-					.post().uri(apiProperties.getRoutes().getGatewayBasePath() + requestPath)
-					.header(apiProperties.getAccessTokenHeaderCode(), "testAccessToken")
-					.exchange()
-					.expectStatus().isOk()
-					.expectBody()
-					.consumeWith(response ->
-							assertThat(response.getResponseBody()).isEqualTo(requestResponseBody.getBytes())
-					);
+			String routeRequestPath = apiProperties.getGatewayBasePath() + requestPath;
+			webClientUtils.postWithTokenForExpectResult(routeRequestPath, HttpStatus.OK, requestResponseBody);
 		}
 	}
 
 	@Test
 	void testHasTokenUrlRequestsWithoutToken() {
 		for (String requestPath: testUrlUtils.getHasTokenHeaderRequestPaths()) {
-			webClient
-					.post().uri(apiProperties.getRoutes().getGatewayBasePath() + requestPath)
-					.exchange()
-					.expectStatus().isNotFound();
+			String routeRequestPath = apiProperties.getGatewayBasePath() + requestPath;
+			webClientUtils.postExpectNotFound(routeRequestPath);
 		}
 	}
 
 	@Test
 	void testNotFoundUrlRequests() {
-		for (String requestUrl: testUrlUtils.getNotFoundRequestPath()) {
-			webClient
-					.post().uri(apiProperties.getRoutes().getGatewayBasePath() + requestUrl)
-					.exchange()
-					.expectStatus().isNotFound();
+		for (String requestPath: testUrlUtils.getNotFoundRequestPath()) {
+			String routeRequestPath = apiProperties.getGatewayBasePath() + requestPath;
+			webClientUtils.postExpectNotFound(routeRequestPath);
 		}
-	}
-
-	private void stubForValidateTokenRequest() {
-		String validateTokenPath = apiProperties.getExternal().getAuth().getPath().getValidateToken();
-		stubFor(post(urlEqualTo(validateTokenPath))
-				.willReturn(aResponse()
-						.withHeader("Content-Type", "application/json")
-						.withStatus(HttpStatus.OK.value())
-						.withBody("success")
-				)
-		);
-	}
-
-	private void stubForJsonRequest(String requestPath, String bodyResult) {
-		stubFor(post(urlEqualTo(requestPath))
-				.willReturn(aResponse()
-						.withHeader("Content-Type", "application/json")
-						.withStatus(HttpStatus.OK.value())
-						.withBody(bodyResult)
-				)
-		);
 	}
 }

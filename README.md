@@ -1,5 +1,25 @@
 # todo-api-gateway
 
+# gateway api
+web -> gateway -> auth
+                -> users
+                -> tod_o
+
+Базовый путь gateway сервиса
+- http://localhost:8080/todo-web-api
+
+Всегда доступные url
+- http://localhost:8080/todo-web-api/auth-api/login
+- http://localhost:8080/todo-web-api/users-api/users/register
+
+Url, для доступа к которым нужен токен, который будет проверяться
+- http://localhost:8080/todo-web-api/notes-api/**
+- http://localhost:8080/todo-web-api/auth-api/**
+
+Проверка токена на валидность
+- http://localhost:8887/auth-api/validateToken
+
+
 # Запуск приложения
 
 ## Запуск всех тестов

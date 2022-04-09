@@ -24,13 +24,21 @@ public class TestUrlUtils {
         };
     }
 
+    public String getTestNotesApiPath() {
+        return apiProperties.getExternal().getNotes().getPath().getBase() + "/testAllNotesApiUrl";
+    }
+
+    public String getTestAuthApiPath() {
+        return  apiProperties.getExternal().getAuth().getPath().getBase() + "/testAllAuthApiUrl";
+    }
+
     /* С токеном пускам в /auth-api/** и /notes-api/** */
     public String[] getHasTokenHeaderRequestPaths() {
         return new String[] {
                 /* Все url из auth-api c токеном */
-                apiProperties.getExternal().getAuth().getPath().getBase() + "/testAllAuthApiUrl",
+                getTestAuthApiPath(),
                 /* Все url из notes-api c токеном */
-                apiProperties.getExternal().getNotes().getPath().getBase() + "/testAllNotesApiUrl"
+                getTestNotesApiPath()
         };
     }
 
