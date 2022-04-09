@@ -12,7 +12,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,gateway
+        include: health,gateway,metrics
 # Кастомные свойства, не связаны с конфигурационными св-вами resilience4j
 circuitbreaker:
   slidingWindowSize: 10

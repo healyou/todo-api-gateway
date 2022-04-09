@@ -1,5 +1,3 @@
-2) TODO метрики на todo-api-gateway-service
-
 web -> gateway -> auth -> users
                -> users
                -> tod_o
