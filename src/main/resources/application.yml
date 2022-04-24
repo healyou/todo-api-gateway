@@ -13,6 +13,10 @@ management:
     web:
       exposure:
         include: health,gateway,metrics
+# set env - CORS_ALLOWEDORIGINS_0=*
+cors:
+  allowedOrigins:
+    - "*"
 # Кастомные свойства, не связаны с конфигурационными св-вами resilience4j
 circuitbreaker:
   slidingWindowSize: 10
