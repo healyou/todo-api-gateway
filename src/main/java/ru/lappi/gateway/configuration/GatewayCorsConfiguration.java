@@ -25,9 +25,7 @@ public class GatewayCorsConfiguration {
     @Bean
     public CorsConfiguration corsConfiguration(RoutePredicateHandlerMapping routePredicateHandlerMapping) {
         CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        allowedOrigins.forEach(corsConfiguration::addAllowedOrigin);
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowedOrigins(allowedOrigins);
         routePredicateHandlerMapping.setCorsConfigurations(
                 new HashMap<>() {{
                     put("/**", corsConfiguration);
