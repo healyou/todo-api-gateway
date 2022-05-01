@@ -9,6 +9,7 @@ import org.springframework.cloud.client.circuitbreaker.Customizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.lappi.gateway.configuration.properties.CircuitBreakerProperties;
+import ru.lappi.gateway.token.ValidateTokenException;
 
 import java.time.Duration;
 
@@ -56,6 +57,8 @@ public class CircuitBreakerConfiguration {
                 .enableAutomaticTransitionFromOpenToHalfOpen()
                 /* Кол-во вызовов в half open состоянии - для перехода в другое состояние */
                 .permittedNumberOfCallsInHalfOpenState(CircuitBreakerConfig.DEFAULT_PERMITTED_CALLS_IN_HALF_OPEN_STATE)
+                /* Валидация токена не должна создавать ошибку для circuit breaker */
+                .ignoreException(throwable -> throwable instanceof ValidateTokenException)
                 .build();
 
         /* Максимальное время операции, по истечению которого будет ошибка - Timeout */
