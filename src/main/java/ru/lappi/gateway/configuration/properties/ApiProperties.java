@@ -24,12 +24,20 @@ public class ApiProperties {
         return getGatewayBasePath() + getExternalLoginPath();
     }
 
+    public String getGatewayAuthRefreshTokenPath() {
+        return getGatewayBasePath() + getExternalRefreshTokenPath();
+    }
+
     public String getGatewayBasePath() {
         return getRoutes().getGatewayBasePath();
     }
 
     public String getExternalLoginPath() {
         return getExternal().getAuth().getPath().getLogin();
+    }
+
+    public String getExternalRefreshTokenPath() {
+        return getExternal().getAuth().getPath().getRefreshToken();
     }
 
     public String getAccessTokenHeaderCode() {

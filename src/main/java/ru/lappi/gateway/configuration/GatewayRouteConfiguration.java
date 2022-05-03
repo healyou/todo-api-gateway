@@ -47,12 +47,24 @@ public class GatewayRouteConfiguration {
         String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
         /* /tod_o-web-api/auth-api/login */
         String loginRoutePattern = gatewayBasePath + authApi.getPath().getLogin();
+        /* /tod_o-web-api/auth-api/refreshToken */
+        String refreshTokenRoutePattern = gatewayBasePath + authApi.getPath().getRefreshToken();
         /* /tod_o-web-api/users-api/users/register */
         String registerRoutePattern = gatewayBasePath + usersApi.getPath().getRegister();
 
         return builder
                 .route("ALWAYS_AVAILABLE_LOGIN_ROUTE", p -> p
                         .path(loginRoutePattern)
+                        .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.AUTH_API_CIRCUIT_BREAKER_NAME)
+                                )
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(authApiUrl)
+                )
+                .route("ALWAYS_AVAILABLE_REFRESH_TOKEN_ROUTE", p -> p
+                        .path(refreshTokenRoutePattern)
                         .filters(f -> f
                                 .circuitBreaker(config ->
                                         config.setName(CircuitBreakerConfiguration.AUTH_API_CIRCUIT_BREAKER_NAME)

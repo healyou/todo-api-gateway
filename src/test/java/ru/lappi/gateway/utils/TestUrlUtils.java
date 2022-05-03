@@ -20,6 +20,7 @@ public class TestUrlUtils {
     public String[] getAlwaysAvailableRequestPaths() {
         return new String[] {
                 apiProperties.getExternal().getAuth().getPath().getLogin(),
+                apiProperties.getExternal().getAuth().getPath().getRefreshToken(),
                 apiProperties.getExternal().getUsers().getPath().getRegister()
         };
     }

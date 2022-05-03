@@ -68,6 +68,7 @@ api:
         base: /auth-api
         login: ${api.external.auth.path.base}/login
         validate-token: ${api.external.auth.path.base}/validateToken
+        refresh-token: ${api.external.auth.path.base}/refreshToken
     users:
       base-url: http://localhost:8082
       path:

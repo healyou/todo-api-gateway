@@ -62,6 +62,21 @@ public class CircuitBreakerTest extends BaseUnitTest {
     }
 
     @Test
+    void testLoginAndRefreshTokenUseSameCircuitBreaker() {
+        stubRequestUtils.stubAllForCircuitBreakerSlowCall();
+
+        /* auth api call */
+        String loginRequestPath = apiProperties.getGatewayAuthLoginPath();
+        webClientUtils.postForExpectStatus(loginRequestPath, HttpStatus.OK);
+        /* auth api call */
+        String refreshTokenRequestPath = apiProperties.getGatewayAuthRefreshTokenPath();
+        webClientUtils.postForExpectStatus(refreshTokenRequestPath, HttpStatus.OK);
+
+        /* 3 запрос -> После перехода в open state - 503 ошибка */
+        webClientUtils.postWithTokenForExpectStatus(loginRequestPath, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @Test
     void testAuthTokenAndNotesTokenUseNotSameCircuitBreaker() {
         stubRequestUtils.stubAllForCircuitBreakerSlowCall();
 

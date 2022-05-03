@@ -38,6 +38,8 @@ public class AuthApi {
         private String login;
         @NotNull
         private String validateToken;
+        @NotNull
+        private String refreshToken;
 
         public String getBase() {
             return base;
@@ -61,6 +63,14 @@ public class AuthApi {
 
         public void setValidateToken(String validateToken) {
             this.validateToken = validateToken;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
         }
     }
 }

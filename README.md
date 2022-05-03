@@ -11,6 +11,7 @@ web -> gateway -> auth
 Всегда доступные url
 - http://localhost:8080/todo-web-api/auth-api/login
 - http://localhost:8080/todo-web-api/users-api/users/register
+- http://localhost:8080/todo-web-api/auth-api/refreshToken
 
 Url, для доступа к которым нужен токен, который будет проверяться
 - http://localhost:8080/todo-web-api/notes-api/**
