@@ -4,6 +4,7 @@
 web -> gateway -> auth
                 -> users
                 -> tod_o
+                -> tod_o_graphql
 
 Базовый путь gateway сервиса
 - http://localhost:8080/todo-web-api
@@ -16,6 +17,7 @@ web -> gateway -> auth
 Url, для доступа к которым нужен токен, который будет проверяться
 - http://localhost:8080/todo-web-api/notes-api/**
 - http://localhost:8080/todo-web-api/auth-api/**
+- http://localhost:8080/todo-web-api/graphql/**
 
 Проверка токена на валидность
 - http://localhost:8887/auth-api/validateToken
@@ -36,9 +38,9 @@ Url, для доступа к которым нужен токен, которы
       'clean install -Dskip-integration-test=false'
 
 ## Запуск приложения для разработки
-    2) Запустить spring приложение через main метод класса
+    1) Запустить spring приложение через main метод класса
       ru.lappi.gateway.GatewayApplication
-    3) Приложение будет принимать запросы по url:
+    2) Приложение будет принимать запросы по url:
       http://localhost:8080/todo-web-api
 
 ## Запуск в докере бд с приложением

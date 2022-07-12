@@ -96,4 +96,25 @@ public class CircuitBreakerTest extends BaseUnitTest {
         /* auth cb превысил лимит ошибок */
         webClientUtils.postWithTokenForExpectStatus(notesApiWithValidateTokenPath, HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    @Test
+    void testAuthTokenAndGraphqlTokenUseNotSameCircuitBreaker() {
+        stubRequestUtils.stubAllForCircuitBreakerSlowCall();
+
+        /* auth cb call -> 1 request */
+        String loginRequestPath = apiProperties.getGatewayAuthLoginPath();
+        for (int i = 0; i < circuitBreakerProperties.getMinimumNumberOfCalls() / 2; i++) {
+            webClientUtils.postForExpectStatus(loginRequestPath, HttpStatus.OK);
+        }
+
+        /* auth cb call + notes cb call -> 2 request */
+        String graphqlApiWithValidateTokenPath = apiProperties.getGatewayBasePath() +
+                testUrlUtils.getTestGraphqlApiPath();
+        for (int i = 0; i < circuitBreakerProperties.getMinimumNumberOfCalls() / 2; i++) {
+            /* Если auth запросы и graphql запросы по одному CB - то тут не будет OK */
+            webClientUtils.postWithTokenForExpectStatus(graphqlApiWithValidateTokenPath, HttpStatus.OK);
+        }
+        /* auth cb превысил лимит ошибок */
+        webClientUtils.postWithTokenForExpectStatus(graphqlApiWithValidateTokenPath, HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }

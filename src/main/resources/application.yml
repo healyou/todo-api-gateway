@@ -78,6 +78,10 @@ api:
       base-url: http://localhost:8222
       path:
         base: /notes-api
+    graphql:
+      base-url: http://localhost:8333
+      path:
+        base: /graphql
 
   routes:
     gateway-base-path: /todo-web-api

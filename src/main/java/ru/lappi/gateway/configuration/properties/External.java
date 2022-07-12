@@ -12,6 +12,8 @@ public class External {
     private UsersApi users;
     @NotNull
     private NotesApi notes;
+    @NotNull
+    private GraphqlApi graphql;
 
     public AuthApi getAuth() {
         return auth;
@@ -35,5 +37,13 @@ public class External {
 
     public void setNotes(NotesApi notes) {
         this.notes = notes;
+    }
+
+    public GraphqlApi getGraphql() {
+        return graphql;
+    }
+
+    public void setGraphql(GraphqlApi graphql) {
+        this.graphql = graphql;
     }
 }

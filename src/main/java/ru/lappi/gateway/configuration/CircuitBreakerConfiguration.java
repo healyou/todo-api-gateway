@@ -21,9 +21,7 @@ public class CircuitBreakerConfiguration {
     public static final String AUTH_API_CIRCUIT_BREAKER_NAME = "authApiCircuitBreaker";
     public static final String USERS_API_CIRCUIT_BREAKER_NAME = "usersApiCircuitBreaker";
     public static final String NOTES_API_CIRCUIT_BREAKER_NAME = "usersApiCircuitBreaker";
-
-    public static final String CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_CODE = "circuitbreaker.slidingWindowSize";
-    public static final String CIRCUIT_BREAKER_MINIMUM_NUMBERS_OF_CALLS_CODE = "circuitbreaker.minimumNumberOfCalls";
+    public static final String GRAPHQL_API_CIRCUIT_BREAKER_NAME = "graphqlApiCircuitBreaker";
 
     @Autowired
     private final CircuitBreakerProperties circuitBreakerProperties;

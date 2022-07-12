@@ -13,3 +13,5 @@ api:
       base-url: http://localhost:${wiremock.server.port}
     notes:
       base-url: http://localhost:${wiremock.server.port}
+    graphql:
+      base-url: http://localhost:${wiremock.server.port}

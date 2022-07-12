@@ -33,13 +33,19 @@ public class TestUrlUtils {
         return  apiProperties.getExternal().getAuth().getPath().getBase() + "/testAllAuthApiUrl";
     }
 
+    public String getTestGraphqlApiPath() {
+        return apiProperties.getExternal().getGraphql().getPath().getBase() + "/testAllGraphqlApiUrl";
+    }
+
     /* С токеном пускам в /auth-api/** и /notes-api/** */
     public String[] getHasTokenHeaderRequestPaths() {
         return new String[] {
                 /* Все url из auth-api c токеном */
                 getTestAuthApiPath(),
                 /* Все url из notes-api c токеном */
-                getTestNotesApiPath()
+                getTestNotesApiPath(),
+                /* Все url из graphql-api с токеном*/
+                getTestGraphqlApiPath()
         };
     }
 

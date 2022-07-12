@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.transport.logging.AdvancedByteBufFormat;
-import ru.lappi.gateway.configuration.properties.ApiProperties;
-import ru.lappi.gateway.configuration.properties.AuthApi;
-import ru.lappi.gateway.configuration.properties.NotesApi;
-import ru.lappi.gateway.configuration.properties.UsersApi;
+import ru.lappi.gateway.configuration.properties.*;
 import ru.lappi.gateway.token.ValidateTokenGatewayFilter;
 
 /**
@@ -88,9 +85,11 @@ public class GatewayRouteConfiguration {
     private RouteLocatorBuilder.Builder configureHasTokenRoutes(RouteLocatorBuilder.Builder builder) {
         NotesApi notesApi = apiProperties.getExternal().getNotes();
         AuthApi authApi = apiProperties.getExternal().getAuth();
+        GraphqlApi graphqlApi = apiProperties.getExternal().getGraphql();
 
         String authApiUrl = authApi.getBaseUrl();
         String notesApiUrl = notesApi.getBaseUrl();
+        String graphqlApiUrl = graphqlApi.getBaseUrl();
         String accessTokenHeaderCode = apiProperties.getAccessTokenHeaderCode();
 
         String gatewayBasePath = apiProperties.getRoutes().getGatewayBasePath();
@@ -98,6 +97,8 @@ public class GatewayRouteConfiguration {
         String notesApiPattern = gatewayBasePath + notesApi .getPath().getBase() + "/**";
         /* /tod_o-web-api/auth-api/** */
         String authApiPattern = gatewayBasePath + authApi.getPath().getBase() + "/**";
+        /* /tod_o-web-api/graphql/** */
+        String graphqlApiPattern = gatewayBasePath + graphqlApi.getPath().getBase() + "/**";
         return builder
                 .route("HAS_TOKEN_NOTES_API_ROUTE", p -> p
                         .path(notesApiPattern)
@@ -124,6 +125,19 @@ public class GatewayRouteConfiguration {
                                 .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
                         )
                         .uri(authApiUrl)
+                )
+                .route("HAS_TOKEN_GRAPHQL_API_ROUTE", p -> p
+                        .path(graphqlApiPattern)
+                        .and()
+                        .header(accessTokenHeaderCode)
+                        .filters(f -> f
+                                .circuitBreaker(config ->
+                                        config.setName(CircuitBreakerConfiguration.GRAPHQL_API_CIRCUIT_BREAKER_NAME)
+                                )
+                                .filter(validateTokenGatewayFilter)
+                                .rewritePath(gatewayBasePath + "/(?<segment>.*)", "/$\\{segment}")
+                        )
+                        .uri(graphqlApiUrl)
                 );
     }
 
